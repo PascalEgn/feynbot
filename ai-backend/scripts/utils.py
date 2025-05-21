@@ -120,7 +120,7 @@ def process_hit(index, hit, vector_store, title_abstract_only, text_splitter):
         langchain_documents = get_record_documents(
             hit, title_abstract_only=title_abstract_only, text_splitter=text_splitter
         )
-        vector_store.add_documents(langchain_documents)
+        vector_store.add_documents(langchain_documents, bulk_size=2000)
         print(f"[{index}] Successfully processed.")
         return True
     except Exception as e:

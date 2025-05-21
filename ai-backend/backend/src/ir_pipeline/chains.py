@@ -1,13 +1,12 @@
 import logging
 
+from backend.src.ir_pipeline.schemas import LLMResponse, Terms
 from langchain_core.language_models import BaseLanguageModel
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langfuse import Langfuse
 from langfuse.api.resources.commons.errors.not_found_error import NotFoundError
-
-from src.ir_pipeline.schemas import LLMResponse, Terms
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +24,10 @@ def _get_prompt(prompt_name: str):
     try:
         langfuse_prompt = fetch_prompt(label=langfuse.environment)
     except NotFoundError:
-        logger.warning(
-            f"Prompt '{prompt_name}' or label '{langfuse.environment}' not found in Langfuse, trying label 'production'"
-        )
+        logger.warning(f"""
+               Prompt '{prompt_name}' or label '{langfuse.environment}'
+               not found in Langfuse, trying label 'production'
+            """)
         langfuse_prompt = fetch_prompt()
 
     prompt_template = PromptTemplate.from_template(
