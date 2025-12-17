@@ -32,7 +32,7 @@ const PaperChat = ({ activePaper }: PaperChatProps) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const { getChatHistory, updateChatHistory } = usePaperChatHistory();
-  const chatHistory = getChatHistory(activePaper.id);
+  const chatHistory = getChatHistory(activePaper.id.toString());
 
   const suggestedQuestions = [
     { label: "Summary", fullQuestion: "Provide a summary of this paper" },
@@ -66,7 +66,7 @@ const PaperChat = ({ activePaper }: PaperChatProps) => {
       content: searchQuery,
     };
 
-    updateChatHistory(activePaper.id, [...chatHistory, userMessage]);
+    updateChatHistory(activePaper.id.toString(), [...chatHistory, userMessage]);
     setIsLoading(true);
     setQuery("");
 
@@ -94,10 +94,10 @@ const PaperChat = ({ activePaper }: PaperChatProps) => {
       };
 
       const updatedHistory = [...chatHistory, userMessage, assistantMessage];
-      updateChatHistory(activePaper.id, updatedHistory);
+      updateChatHistory(activePaper.id.toString(), updatedHistory);
     } catch {
       toast.error("Something went wrong. Please try again later.");
-      updateChatHistory(activePaper.id, chatHistory);
+      updateChatHistory(activePaper.id.toString(), chatHistory);
     } finally {
       setIsLoading(false);
     }
