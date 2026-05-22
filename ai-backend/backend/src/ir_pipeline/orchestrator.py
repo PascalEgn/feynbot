@@ -26,6 +26,7 @@ from backend.src.utils.reranker import CustomJinaRerank
 from langchain.schema import Document
 from langchain_community.llms import VLLMOpenAI
 from langchain_community.vectorstores import OpenSearchVectorSearch
+from langchain_openai import ChatOpenAI
 from langfuse.callback import CallbackHandler
 
 LANGFUSE_HANDLER = CallbackHandler(
@@ -103,17 +104,27 @@ def initialize_chains(model):
     if model in CHAIN_CACHE:
         return
 
-    llm = VLLMOpenAI(
-        model_name=model,
-        openai_api_base=f"{getenv('API_BASE')}/v1",
-        default_headers=(
-            {"Host": getenv("KUBEFLOW_LLM_HOST")} if getenv("KUBEFLOW_LLM_HOST") else {}
-        ),
-        openai_api_key=getenv("KUBEFLOW_API_KEY"),
-        temperature=0,
-        top_p=1,
-        timeout=20,
-    )
+    openai_api_key = getenv("OPENAI_API_KEY")
+    if openai_api_key:
+        openai_model = getenv("OPENAI_MODEL", "gpt-4.1-2025-04-14")
+        llm = ChatOpenAI(
+            model=openai_model,
+            api_key=openai_api_key,
+            temperature=0,
+            timeout=20,
+        )
+    else:
+        llm = VLLMOpenAI(
+            model_name=model,
+            openai_api_base=f"{getenv('API_BASE')}/v1",
+            default_headers=(
+                {"Host": getenv("KUBEFLOW_LLM_HOST")} if getenv("KUBEFLOW_LLM_HOST") else {}
+            ),
+            openai_api_key=getenv("KUBEFLOW_API_KEY"),
+            temperature=0,
+            top_p=1,
+            timeout=20,
+        )
 
     CHAIN_CACHE[model] = {
         "expand_chain": create_query_expansion_chain(llm=llm),
