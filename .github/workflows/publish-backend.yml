@@ -7,7 +7,7 @@ jobs:
   build-and-publish-backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -16,7 +16,7 @@ jobs:
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Build and push backend
-        uses: cern-sis/gh-workflows/.github/actions/docker-build@v6.4.1
+        uses: cern-sis/gh-workflows/.github/actions/docker-build@v7.0.0
         with:
           context: ./ai-backend
           dockerfile: ./ai-backend/Dockerfile
